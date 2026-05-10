@@ -1,3 +1,9 @@
+import { Heart } from 'lucide-react';
+
+interface FooterProps {
+  onOpenCard: () => void;
+}
+
 const navLinks = ['Services', 'Portfolio', 'Contact'] as const;
 
 function IconGithub() {
@@ -30,7 +36,7 @@ const socials = [
   { icon: IconX, href: '#', label: 'Twitter/X' },
 ] as const;
 
-export default function Footer() {
+export default function Footer({ onOpenCard }: FooterProps) {
   const year = new Date().getFullYear();
 
   return (
@@ -76,10 +82,19 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-white/[0.04] text-center">
+        <div className="mt-8 pt-6 border-t border-white/[0.04] text-center flex flex-col items-center gap-4">
           <p className="text-gray-600 text-xs tracking-wide">
             © {year} JisonTechSolutions. All rights reserved. Built with React + Vite.
           </p>
+
+          {/* Secret Mother's Day card trigger */}
+          <button
+            onClick={onOpenCard}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 hover:border-rose-400/40 text-rose-400 hover:text-rose-300 text-xs tracking-wide transition-all duration-300 active:scale-95 group"
+          >
+            <Heart size={12} className="fill-rose-400 group-hover:fill-rose-300 transition-colors" />
+            Tap to open
+          </button>
         </div>
       </div>
     </footer>
