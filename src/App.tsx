@@ -4,9 +4,9 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
 import Projects from './components/Projects';
-import Portfolio from './components/Portfolio';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import Dock from './components/Dock';
 import MothersDay from './components/MothersDay';
 
 export default function App() {
@@ -14,16 +14,27 @@ export default function App() {
 
   return (
     <>
+      <div className="aurora">
+        <div className="blob blob-1" />
+        <div className="blob blob-2" />
+        <div className="blob blob-3" />
+        <div className="blob blob-4" />
+      </div>
+      <div className="aurora-tint" />
       <Cursor />
+      <div className="grain" />
+
       <Navbar />
-      <main>
-        <Hero />
-        <About />
-        <Projects />
-        <Portfolio />
-        <Contact />
-      </main>
-      <Footer onOpenCard={() => setShowCard(true)} />
+      <div className="layer">
+        <main>
+          <Hero />
+          <About />
+          <Projects />
+          <Contact />
+        </main>
+        <Footer onOpenCard={() => setShowCard(true)} />
+      </div>
+      <Dock />
       {showCard && <MothersDay onClose={() => setShowCard(false)} />}
     </>
   );

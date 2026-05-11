@@ -1,34 +1,26 @@
 import { useEffect, useRef } from 'react';
 
 export default function Cursor() {
-  const dotRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const dot = dotRef.current!;
-    const ring = ringRef.current!;
-    let mx = window.innerWidth / 2;
-    let my = window.innerHeight / 2;
-    let rx = mx;
-    let ry = my;
+    let tx = window.innerWidth / 2;
+    let ty = window.innerHeight / 2;
+    let cx = tx;
+    let cy = ty;
     let raf: number;
 
-    const onMove = (e: PointerEvent) => {
-      mx = e.clientX;
-      my = e.clientY;
-      dot.style.transform = `translate(${mx}px,${my}px) translate(-50%,-50%)`;
-      const hoverable = (e.target as Element)?.closest?.('a,button,input,[data-hover]');
-      ring.classList.toggle('hovering', !!hoverable);
-    };
-
-    const loop = () => {
-      rx += (mx - rx) * 0.18;
-      ry += (my - ry) * 0.18;
-      ring.style.transform = `translate(${rx}px,${ry}px) translate(-50%,-50%)`;
-      raf = requestAnimationFrame(loop);
-    };
-
+    const onMove = (e: PointerEvent) => { tx = e.clientX; ty = e.clientY; };
     window.addEventListener('pointermove', onMove);
+
+    function loop() {
+      cx += (tx - cx) * 0.12;
+      cy += (ty - cy) * 0.12;
+      if (glowRef.current) {
+        glowRef.current.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%)`;
+      }
+      raf = requestAnimationFrame(loop);
+    }
     loop();
 
     return () => {
@@ -37,10 +29,5 @@ export default function Cursor() {
     };
   }, []);
 
-  return (
-    <>
-      <div ref={dotRef} className="cursor-dot" />
-      <div ref={ringRef} className="cursor-ring" />
-    </>
-  );
+  return <div ref={glowRef} className="cursor-glow" />;
 }
