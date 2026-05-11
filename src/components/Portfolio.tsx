@@ -22,7 +22,7 @@ const projects: Project[] = [
       'A high-performance court reservation platform utilizing a fully serverless backend. Built with AWS Amplify Gen 2, DynamoDB, React, and Tailwind CSS. Employs strict IAM role delegation and sub-second database query performance.',
     tags: ['React', 'TypeScript', 'AWS Amplify Gen 2', 'DynamoDB', 'Tailwind CSS'],
     status: 'Live',
-    demoUrl: 'https://main.d1ir46g2ennp3z.amplifyapp.com',
+    demoUrl: 'https://court-booking-system.pauljison.com',
     githubUrl: 'https://github.com/JisonTechSolutions/court-booking-system',
   },
   {
