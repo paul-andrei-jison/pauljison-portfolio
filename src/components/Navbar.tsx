@@ -1,75 +1,107 @@
-import { useState } from 'react';
-import { Menu, X, ArrowRight } from 'lucide-react';
-
-const navLinks = ['Services', 'Portfolio', 'Contact'] as const;
+import { useEffect, useState } from 'react';
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
+  }, []);
 
   return (
-    <nav className="fixed top-0 inset-x-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-white/5">
-      <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
-        {/* Logo */}
-        <a href="#" className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center text-white font-bold text-sm tracking-tighter select-none">
-            PJ
-          </div>
-          <span className="text-white font-semibold tracking-tight text-sm">JisonTechSolutions</span>
-        </a>
+    <nav
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        padding: '22px 40px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backdropFilter: 'blur(12px) saturate(120%)',
+        background: scrolled
+          ? 'rgba(11,11,15,0.8)'
+          : 'linear-gradient(180deg, rgba(11,11,15,0.7), rgba(11,11,15,0))',
+        borderBottom: scrolled ? '1px solid var(--line)' : '1px solid transparent',
+        transition: 'border-color .4s ease, background .4s ease',
+      }}
+    >
+      <a
+        href="#top"
+        data-hover
+        style={{
+          fontFamily: "'Instrument Serif', serif",
+          fontSize: 24,
+          letterSpacing: '0.02em',
+          color: 'var(--text-0)',
+          display: 'flex',
+          alignItems: 'baseline',
+          gap: 10,
+          whiteSpace: 'nowrap',
+        }}
+      >
+        <span
+          style={{
+            width: 6,
+            height: 6,
+            background: 'var(--teal)',
+            borderRadius: '50%',
+            display: 'inline-block',
+            transform: 'translateY(-2px)',
+          }}
+        />
+        Paul Jison
+      </a>
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map(link => (
-            <a
-              key={link}
-              href={`#${link.toLowerCase()}`}
-              className="text-gray-400 hover:text-white text-sm tracking-wide transition-colors duration-200"
-            >
-              {link}
-            </a>
-          ))}
-        </div>
-
-        {/* Desktop CTA */}
-        <a
-          href="#contact"
-          className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-medium tracking-wide transition-all duration-300 active:scale-95"
-        >
-          Let's Talk <ArrowRight size={14} />
-        </a>
-
-        {/* Mobile toggle */}
-        <button
-          className="md:hidden text-gray-400 hover:text-white transition-colors p-1"
-          onClick={() => setOpen(prev => !prev)}
-          aria-label="Toggle navigation"
-        >
-          {open ? <X size={20} /> : <Menu size={20} />}
-        </button>
+      <div
+        className="nav-links"
+        style={{
+          display: 'flex',
+          gap: 36,
+          fontSize: 13,
+          letterSpacing: '0.04em',
+          textTransform: 'uppercase',
+          color: 'var(--text-1)',
+        }}
+      >
+        <a href="#about" className="nav-link" data-hover>About</a>
+        <a href="#work" className="nav-link" data-hover>Work</a>
+        <a href="#contact" className="nav-link" data-hover>Contact</a>
       </div>
 
-      {/* Mobile drawer */}
-      {open && (
-        <div className="md:hidden border-t border-white/5 bg-slate-950/95 backdrop-blur-md px-6 py-5 flex flex-col gap-4">
-          {navLinks.map(link => (
-            <a
-              key={link}
-              href={`#${link.toLowerCase()}`}
-              className="text-gray-400 hover:text-white text-sm tracking-wide transition-colors"
-              onClick={() => setOpen(false)}
-            >
-              {link}
-            </a>
-          ))}
-          <a
-            href="#contact"
-            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-500 text-white text-sm font-medium tracking-wide transition-all duration-300 active:scale-95"
-            onClick={() => setOpen(false)}
-          >
-            Let's Talk <ArrowRight size={14} />
-          </a>
-        </div>
-      )}
+      <a
+        href="#contact"
+        className="nav-cta"
+        data-hover
+        style={{
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 11,
+          letterSpacing: '0.1em',
+          textTransform: 'uppercase',
+          padding: '10px 18px',
+          border: '1px solid var(--line-strong)',
+          borderRadius: 999,
+          color: 'var(--text-0)',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 8,
+        }}
+      >
+        <span
+          className="pulse-anim"
+          style={{
+            width: 6,
+            height: 6,
+            borderRadius: '50%',
+            background: 'var(--teal)',
+            flexShrink: 0,
+          }}
+        />
+        Available for hire
+      </a>
     </nav>
   );
 }

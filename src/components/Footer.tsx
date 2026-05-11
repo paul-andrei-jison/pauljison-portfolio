@@ -1,102 +1,113 @@
-import { Heart } from 'lucide-react';
-
 interface FooterProps {
   onOpenCard: () => void;
 }
 
-const navLinks = ['Services', 'Portfolio', 'Contact'] as const;
-
-function IconGithub() {
-  return (
-    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-      <path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.579.688.481C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
-    </svg>
-  );
-}
-
-function IconLinkedin() {
-  return (
-    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-    </svg>
-  );
-}
-
-function IconX() {
-  return (
-    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.912-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-    </svg>
-  );
-}
-
-const socials = [
-  { icon: IconGithub, href: '#', label: 'GitHub' },
-  { icon: IconLinkedin, href: '#', label: 'LinkedIn' },
-  { icon: IconX, href: '#', label: 'Twitter/X' },
-] as const;
-
 export default function Footer({ onOpenCard }: FooterProps) {
-  const year = new Date().getFullYear();
-
   return (
-    <footer className="border-t border-white/[0.06] py-12">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center text-white font-bold text-sm tracking-tighter select-none">
-              PJ
-            </div>
-            <div>
-              <p className="text-white font-semibold tracking-tight text-sm">JisonTechSolutions</p>
-              <p className="text-gray-500 text-xs tracking-wide">Davao's Premier Full-Stack Studio</p>
-            </div>
+    <footer style={{ padding: '60px 0 30px', borderTop: '1px solid var(--line)', background: 'var(--bg-0)' }}>
+      <div style={{ width: '100%', maxWidth: 1280, margin: '0 auto', padding: '0 40px' }}>
+
+        {/* Top grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 40, paddingBottom: 60 }} className="footer-top">
+          {/* Mark */}
+          <div
+            style={{
+              fontFamily: "'Instrument Serif', serif",
+              fontSize: 80,
+              lineHeight: 0.9,
+              color: 'var(--text-0)',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            Paul
+            <br />
+            <em style={{ fontStyle: 'italic', color: 'var(--teal)' }}>Jison.</em>
           </div>
 
-          {/* Nav */}
-          <div className="flex items-center gap-6">
-            {navLinks.map(link => (
-              <a
-                key={link}
-                href={`#${link.toLowerCase()}`}
-                className="text-gray-500 hover:text-gray-300 text-sm tracking-wide transition-colors duration-200"
-              >
-                {link}
-              </a>
-            ))}
+          {/* Sitemap */}
+          <div>
+            <h5 style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-2)', marginBottom: 18 }}>
+              Sitemap
+            </h5>
+            <a href="#about" className="footer-col-link" data-hover>About</a>
+            <a href="#work" className="footer-col-link" data-hover>Work</a>
+            <a href="#contact" className="footer-col-link" data-hover>Contact</a>
           </div>
 
-          {/* Socials */}
-          <div className="flex items-center gap-3">
-            {socials.map(({ icon: Icon, href, label }) => (
-              <a
-                key={label}
-                href={href}
-                aria-label={label}
-                className="w-8 h-8 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-gray-500 hover:text-white hover:border-white/[0.15] hover:bg-white/[0.08] transition-all duration-200"
-              >
-                <Icon />
-              </a>
-            ))}
+          {/* Social */}
+          <div>
+            <h5 style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-2)', marginBottom: 18 }}>
+              Social
+            </h5>
+            <a href="#" className="footer-col-link" data-hover>GitHub ↗</a>
+            <a href="#" className="footer-col-link" data-hover>LinkedIn ↗</a>
+            <a href="#" className="footer-col-link" data-hover>Twitter ↗</a>
+            <a href="#" className="footer-col-link" data-hover>Read.cv ↗</a>
+          </div>
+
+          {/* Elsewhere */}
+          <div>
+            <h5 style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-2)', marginBottom: 18 }}>
+              Elsewhere
+            </h5>
+            <a href="#" className="footer-col-link" data-hover>Writing</a>
+            <a href="#" className="footer-col-link" data-hover>Robotics log</a>
+            <a href="#" className="footer-col-link" data-hover>Language notes</a>
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-white/[0.04] text-center flex flex-col items-center gap-4">
-          <p className="text-gray-600 text-xs tracking-wide">
-            © {year} JisonTechSolutions. All rights reserved. Built with React + Vite.
-          </p>
+        {/* Bottom bar */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingTop: 30,
+            borderTop: '1px solid var(--line)',
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: 11,
+            color: 'var(--text-2)',
+            letterSpacing: '0.05em',
+          }}
+          className="footer-bottom"
+        >
+          <span>© 2026 Paul Jison. Built with patience and too much coffee.</span>
 
-          {/* Secret Mother's Day card trigger */}
           <button
             onClick={onOpenCard}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 hover:border-rose-400/40 text-rose-400 hover:text-rose-300 text-xs tracking-wide transition-all duration-300 active:scale-95 group"
+            data-hover
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 11,
+              letterSpacing: '0.05em',
+              color: 'var(--text-2)',
+              opacity: 0.4,
+              transition: 'opacity .3s',
+            }}
+            onPointerEnter={e => (e.currentTarget.style.opacity = '1')}
+            onPointerLeave={e => (e.currentTarget.style.opacity = '0.4')}
+            aria-label="Open surprise card"
           >
-            <Heart size={12} className="fill-rose-400 group-hover:fill-rose-300 transition-colors" />
-            Tap to open
+            ♡
           </button>
+
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+            <span
+              className="pulse-anim"
+              style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--teal)', display: 'inline-block' }}
+            />
+            System operational · Manila, PH
+          </span>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 900px) {
+          .footer-top { grid-template-columns: 1fr 1fr !important; }
+          .footer-top > *:first-child { grid-column: span 2; font-size: 56px !important; }
+          .footer-bottom { flex-direction: column !important; gap: 12px !important; }
+        }
+      `}</style>
     </footer>
   );
 }

@@ -1,3 +1,5 @@
+import { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { ExternalLink, Circle } from 'lucide-react';
 
 type Status = 'Live' | 'In Progress';
@@ -9,17 +11,19 @@ interface Project {
   tags: string[];
   status: Status;
   demoUrl: string;
+  githubUrl?: string;
 }
 
 const projects: Project[] = [
   {
-    title: 'Digital Front Desk',
-    subtitle: 'Sports Court Booking SaaS',
+    title: 'Serverless Court Booking System',
+    subtitle: 'Serverless AWS Platform',
     description:
-      'A complete reservation and court management platform for pickleball clubs and sports complexes. Real-time availability, online payments, and operator dashboards.',
-    tags: ['React', 'Node.js', 'Stripe', 'PostgreSQL'],
-    status: 'In Progress',
-    demoUrl: '#',
+      'A high-performance court reservation platform utilizing a fully serverless backend. Built with AWS Amplify Gen 2, DynamoDB, React, and Tailwind CSS. Employs strict IAM role delegation and sub-second database query performance.',
+    tags: ['React', 'TypeScript', 'AWS Amplify Gen 2', 'DynamoDB', 'Tailwind CSS'],
+    status: 'Live',
+    demoUrl: 'https://main.d1ir46g2ennp3z.amplifyapp.com',
+    githubUrl: 'https://github.com/JisonTechSolutions/court-booking-system',
   },
   {
     title: 'Arduino E-Commerce',
@@ -28,7 +32,7 @@ const projects: Project[] = [
       "A specialized e-commerce storefront for local Arduino components, robotics kits, and electronics — built for Davao's maker community with full inventory and order management.",
     tags: ['React', 'Express', 'MongoDB', 'PayMongo'],
     status: 'In Progress',
-    demoUrl: '#',
+    demoUrl: 'https://arduino-e-commerce.pauljison.com',
   },
   {
     title: 'Gym Membership Portal',
@@ -37,7 +41,7 @@ const projects: Project[] = [
       'A white-label gym management system featuring member onboarding, recurring billing, attendance tracking, and a mobile-first member portal.',
     tags: ['React', 'Node.js', 'Supabase', 'Stripe'],
     status: 'Live',
-    demoUrl: '#',
+    demoUrl: 'https://gym-membership-portal.pauljison.com',
   },
 ];
 
@@ -61,7 +65,24 @@ function BrowserChrome({ slug }: { slug: string }) {
   );
 }
 
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 32 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+  },
+};
+
 export default function Portfolio() {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.15 });
+
   return (
     <section id="portfolio" className="py-32">
       <div className="max-w-6xl mx-auto px-6">
@@ -79,13 +100,22 @@ export default function Portfolio() {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div
+          ref={ref}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          variants={containerVariants}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+        >
           {projects.map(project => {
             const slug = project.title.toLowerCase().replace(/\s+/g, '-');
             return (
-              <div
+              <motion.div
                 key={project.title}
+                variants={cardVariants}
                 className="group flex flex-col rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-md overflow-hidden hover:border-white/[0.15] hover:bg-white/[0.05] transition-all duration-300"
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
               >
                 <BrowserChrome slug={slug} />
 
@@ -128,17 +158,31 @@ export default function Portfolio() {
                   </div>
 
                   {/* CTA */}
-                  <a
-                    href={project.demoUrl}
-                    className="flex items-center gap-2 text-blue-400 text-sm font-medium tracking-wide hover:text-blue-300 transition-all duration-200 group-hover:gap-3"
-                  >
-                    View Demo <ExternalLink size={13} />
-                  </a>
+                  <div className="flex items-center gap-4">
+                    <a
+                      href={project.demoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-blue-400 text-sm font-medium tracking-wide hover:text-blue-300 transition-all duration-200 group-hover:gap-3"
+                    >
+                      View Live <ExternalLink size={13} />
+                    </a>
+                    {project.githubUrl && (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-gray-500 text-sm font-medium tracking-wide hover:text-gray-300 transition-all duration-200"
+                      >
+                        GitHub <ExternalLink size={13} />
+                      </a>
+                    )}
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

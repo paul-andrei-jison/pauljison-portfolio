@@ -1,199 +1,262 @@
-import { useState } from 'react';
-import { Send, Loader2, CheckCircle, AlertCircle, MapPin, Mail, Clock } from 'lucide-react';
+import { useState, useRef, useEffect, type ReactNode, type FormEvent, type KeyboardEvent } from 'react';
+import { motion } from 'framer-motion';
 
-type FormStatus = 'idle' | 'loading' | 'success' | 'error';
-
-interface FormData {
-  name: string;
-  email: string;
-  company: string;
-  message: string;
+function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-8% 0px' }}
+      transition={{ duration: 0.9, ease: [0.2, 0.7, 0.2, 1] as const, delay }}
+    >
+      {children}
+    </motion.div>
+  );
 }
 
-const emptyForm: FormData = { name: '', email: '', company: '', message: '' };
+// ---- Arrow icon ----
+function ArrowIcon() {
+  return (
+    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+      <path d="M1 9L9 1M9 1H3M9 1V7" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+    </svg>
+  );
+}
 
-const trustSignals = [
-  { icon: MapPin, label: 'Location', value: 'Davao City, Philippines' },
-  { icon: Mail, label: 'Email', value: 'hello@pauljison.com' },
-  { icon: Clock, label: 'Response Time', value: 'Within 24 hours' },
-] as const;
+// ---- Chatbot ----
+type MessageFrom = 'bot' | 'user';
+interface Message { text: string; from: MessageFrom; typing?: boolean }
 
-const inputBase =
-  'w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder-gray-600 text-sm tracking-wide focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.06] transition-all duration-200';
+const replies = [
+  { match: /stack|tech|react|node|typescript/i, reply: "Front: React + TypeScript + Tailwind. Back: Node, tRPC, Postgres. For fun: ROS, ESP32, and a dangerous amount of Python." },
+  { match: /available|hire|job|work/i, reply: "Open to staff-eng & R&D roles starting June 2026. Remote, Tokyo, or Berlin. Drop me an email — I read every one." },
+  { match: /joke|funny/i, reply: "Why don't C# devs go camping? They prefer using { }." },
+  { match: /robot|rover|hardware/i, reply: "Currently teaching an ESP32-S3 sign language. It's about 60% fluent in 'wave hello'. Slow progress." },
+  { match: /language|polyglot|tagalog|japanese|french|esperanto/i, reply: "English & Tagalog native. Conversational Japanese, intermediate French, a hopeful amount of Esperanto. ¿Cómo no?" },
+  { match: /location|where|live|manila|philippines/i, reply: "Based in Manila — but happy to relocate. My laptop is light." },
+  { match: /price|rate|cost|salary/i, reply: "Depends on the problem. For mission work I'm cheap; for ad-tech I'm expensive. We'll figure it out." },
+  { match: /hello|hi|hey|sup/i, reply: "Hello, human. I'm 12% Paul and 88% wishful thinking. Ask me about his work." },
+];
+const fallback = "Hm, that's a question for the real Paul. Email him at hello@pauljison.dev and he'll write back within a day.";
 
-export default function Contact() {
-  const [form, setForm] = useState<FormData>(emptyForm);
-  const [status, setStatus] = useState<FormStatus>('idle');
+function Chatbot() {
+  const [messages, setMessages] = useState<Message[]>([
+    { text: "Hi! I'm Paul's tiny clone. Ask me anything — or pick a starter below.", from: 'bot' },
+  ]);
+  const [input, setInput] = useState('');
+  const msgsRef = useRef<HTMLDivElement>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-  };
+  useEffect(() => {
+    if (msgsRef.current) msgsRef.current.scrollTop = msgsRef.current.scrollHeight;
+  }, [messages]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  function respond(q: string) {
+    setMessages(prev => [
+      ...prev,
+      { text: q, from: 'user' },
+      { text: '', from: 'bot', typing: true },
+    ]);
+    setTimeout(() => {
+      const hit = replies.find(r => r.match.test(q));
+      setMessages(prev => [
+        ...prev.filter(m => !m.typing),
+        { text: hit ? hit.reply : fallback, from: 'bot' },
+      ]);
+    }, 700 + Math.random() * 500);
+  }
+
+  function submit(e: FormEvent) {
     e.preventDefault();
-    setStatus('loading');
+    const v = input.trim();
+    if (!v) return;
+    respond(v);
+    setInput('');
+  }
 
-    try {
-      // TODO: Connect to Render Backend API
-      const res = await fetch('https://api.pauljison.com/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
-
-      if (!res.ok) throw new Error('Non-2xx response');
-
-      setStatus('success');
-      setForm(emptyForm);
-    } catch {
-      setStatus('error');
-    }
-  };
-
-  const isDisabled = status === 'loading' || status === 'success';
+  function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') { e.preventDefault(); submit(e as unknown as FormEvent); }
+  }
 
   return (
-    <section id="contact" className="py-32">
-      <div className="max-w-6xl mx-auto px-6">
-        {/* Header */}
-        <div className="mb-16 text-center">
-          <span className="text-blue-400 text-xs font-medium tracking-widest uppercase">
-            Get In Touch
-          </span>
-          <h2 className="mt-3 text-4xl md:text-5xl font-bold tracking-tighter text-white">
-            Ready to Build Something?
-          </h2>
-          <p className="mt-4 text-gray-400 tracking-wide max-w-xl mx-auto">
-            Tell us about your project. We'll get back within 24 hours with a clear proposal.
-          </p>
+    <div className="chatbot-card">
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingBottom: 16, borderBottom: '1px solid var(--line)' }}>
+        <div style={{
+          width: 36, height: 36, borderRadius: '50%',
+          background: 'linear-gradient(135deg, var(--teal), var(--purple))',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontFamily: "'Instrument Serif', serif", color: '#0b0b0f', fontSize: 18,
+        }}>
+          P
         </div>
+        <div>
+          <div style={{ fontSize: 14, color: 'var(--text-0)' }}>Paul-bot v0.4</div>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: 'var(--text-2)', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: 2 }}>
+            <span style={{ color: 'var(--teal)' }}>●</span> trained on my résumé
+          </div>
+        </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
-          {/* Trust signals */}
-          <div className="lg:col-span-2 flex flex-col gap-8">
-            <div className="flex flex-col gap-6">
-              {trustSignals.map(({ icon: Icon, label, value }) => (
-                <div key={label} className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
-                    <Icon size={16} className="text-blue-400" />
-                  </div>
-                  <div>
-                    <p className="text-gray-500 text-xs tracking-widest uppercase">{label}</p>
-                    <p className="text-white text-sm tracking-wide mt-0.5">{value}</p>
-                  </div>
-                </div>
-              ))}
+      {/* Messages */}
+      <div
+        ref={msgsRef}
+        className="chatbot-msgs"
+        style={{ flex: 1, overflowY: 'auto', padding: '16px 0', display: 'flex', flexDirection: 'column', gap: 10 }}
+      >
+        {messages.map((msg, i) => (
+          msg.typing ? (
+            <div key={i} style={{
+              maxWidth: '88%', padding: 14,
+              background: 'var(--bg-2)',
+              border: '1px solid var(--line)',
+              borderRadius: '14px 14px 14px 4px',
+              alignSelf: 'flex-start',
+              display: 'inline-flex', gap: 4, alignItems: 'center',
+            }}>
+              <span className="typing-dot" style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--text-2)', display: 'inline-block' }} />
+              <span className="typing-dot" style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--text-2)', display: 'inline-block' }} />
+              <span className="typing-dot" style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--text-2)', display: 'inline-block' }} />
             </div>
+          ) : (
+            <div key={i} style={{
+              maxWidth: '88%',
+              padding: '10px 14px',
+              borderRadius: msg.from === 'bot' ? '14px 14px 14px 4px' : '14px 14px 4px 14px',
+              fontSize: 14, lineHeight: 1.45,
+              alignSelf: msg.from === 'bot' ? 'flex-start' : 'flex-end',
+              background: msg.from === 'bot'
+                ? 'var(--bg-2)'
+                : 'linear-gradient(135deg, var(--teal), var(--purple))',
+              color: msg.from === 'bot' ? 'var(--text-0)' : '#0b0b0f',
+              border: msg.from === 'bot' ? '1px solid var(--line)' : 'none',
+            }}>
+              {msg.text}
+            </div>
+          )
+        ))}
+      </div>
 
-            <div className="border-t border-white/[0.06]" />
+      {/* Quick replies */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+        {["What's your stack?", 'Available?', 'Tell me a joke'].map(q => (
+          <button key={q} className="quick-btn" data-hover onClick={() => respond(q)}>{q}</button>
+        ))}
+      </div>
 
-            <div className="p-6 rounded-2xl bg-blue-500/5 border border-blue-500/10">
-              <p className="text-blue-300 text-sm tracking-wide leading-relaxed">
-                "We specialize in turning complex business problems into elegant digital solutions.
-                Every project starts with a free discovery call."
+      {/* Input */}
+      <form
+        onSubmit={submit}
+        style={{ display: 'flex', gap: 8, paddingTop: 12, borderTop: '1px solid var(--line)' }}
+      >
+        <input
+          type="text"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={onKeyDown}
+          placeholder="Type a question..."
+          autoComplete="off"
+          className="chatbot-input-field"
+          data-hover
+          style={{ flex: 1 }}
+        />
+        <button
+          type="submit"
+          data-hover
+          style={{
+            width: 44, height: 44, borderRadius: '50%',
+            background: 'linear-gradient(135deg, var(--teal), var(--purple))',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: '#0b0b0f',
+            transition: 'transform .3s',
+            flexShrink: 0,
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M2 8L14 2L8 14L7 9L2 8Z" stroke="#0B0B0F" strokeWidth="1.4" strokeLinejoin="round" />
+          </svg>
+        </button>
+      </form>
+    </div>
+  );
+}
+
+const contactRows = [
+  { label: 'Email', value: 'hello@pauljison.dev', href: 'mailto:hello@pauljison.dev' },
+  { label: 'LinkedIn', value: 'in/pauljison', href: '#' },
+  { label: 'GitHub', value: '@pauljison', href: '#' },
+  { label: 'Read.cv', value: 'paul.read.cv', href: '#' },
+];
+
+export default function Contact() {
+  return (
+    <section
+      id="contact"
+      style={{ padding: '160px 0 80px', borderTop: '1px solid var(--line)', position: 'relative' }}
+    >
+      <div style={{ width: '100%', maxWidth: 1280, margin: '0 auto', padding: '0 40px' }}>
+        <div
+          style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 80, alignItems: 'start' }}
+          className="contact-grid"
+        >
+          {/* Left: links */}
+          <div>
+            <div className="eyebrow">03 — Get in touch</div>
+            <Reveal>
+              <h2 style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 400,
+                fontSize: 'clamp(48px, 8vw, 120px)',
+                lineHeight: 0.95,
+                letterSpacing: '-0.04em',
+                color: 'var(--text-0)',
+                margin: '24px 0 32px',
+              }}>
+                Let's build something{' '}
+                <em style={{
+                  fontFamily: "'Instrument Serif', serif",
+                  fontStyle: 'italic',
+                  background: 'linear-gradient(120deg, var(--teal), var(--purple))',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
+                  color: 'transparent',
+                }}>
+                  strange and useful
+                </em>
+                .
+              </h2>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <p style={{ fontSize: 17, lineHeight: 1.6, color: 'var(--text-1)', maxWidth: 480 }}>
+                I'm hunting for staff-engineer or R&D roles that overlap with robotics, language, or anything in-between. Drop a line — or chat with my robot first, on the right.
               </p>
-              <p className="text-gray-500 text-xs tracking-wide mt-4">— Paul Jison, Founder</p>
+            </Reveal>
+
+            <div style={{ marginTop: 40, borderTop: '1px solid var(--line)' }}>
+              {contactRows.map(({ label, value, href }) => (
+                <a key={label} href={href} className="contact-row" data-hover>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-2)' }}>
+                    {label}
+                  </span>
+                  <span style={{ fontSize: 18, color: 'var(--text-0)' }}>{value}</span>
+                  <span className="ca"><ArrowIcon /></span>
+                </a>
+              ))}
             </div>
           </div>
 
-          {/* Form */}
-          <form
-            onSubmit={handleSubmit}
-            className="lg:col-span-3 p-8 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-md flex flex-col gap-5"
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div className="flex flex-col gap-2">
-                <label htmlFor="name" className="text-gray-400 text-xs tracking-widest uppercase">
-                  Name *
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  name="name"
-                  required
-                  value={form.name}
-                  onChange={handleChange}
-                  placeholder="Juan dela Cruz"
-                  className={inputBase}
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="email" className="text-gray-400 text-xs tracking-widest uppercase">
-                  Email *
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  required
-                  value={form.email}
-                  onChange={handleChange}
-                  placeholder="juan@business.com"
-                  className={inputBase}
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label htmlFor="company" className="text-gray-400 text-xs tracking-widest uppercase">
-                Company (optional)
-              </label>
-              <input
-                id="company"
-                type="text"
-                name="company"
-                value={form.company}
-                onChange={handleChange}
-                placeholder="Your Business Name"
-                className={inputBase}
-              />
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label htmlFor="message" className="text-gray-400 text-xs tracking-widest uppercase">
-                Message *
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                required
-                rows={5}
-                value={form.message}
-                onChange={handleChange}
-                placeholder="Tell us about your project, timeline, and goals..."
-                className={`${inputBase} resize-none`}
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={isDisabled}
-              className="flex items-center justify-center gap-2 w-full px-6 py-3.5 rounded-xl bg-blue-500 hover:bg-blue-400 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold tracking-wide transition-all duration-300 active:scale-95 shadow-lg shadow-blue-500/20"
-            >
-              {status === 'loading' && <Loader2 size={16} className="animate-spin" />}
-              {status === 'success' && <CheckCircle size={16} />}
-              {(status === 'idle' || status === 'error') && <Send size={16} />}
-              {status === 'loading'
-                ? 'Sending...'
-                : status === 'success'
-                  ? 'Message Sent!'
-                  : 'Send Message'}
-            </button>
-
-            {status === 'success' && (
-              <p className="flex items-center gap-2 text-emerald-400 text-sm tracking-wide">
-                <CheckCircle size={14} /> We'll be in touch within 24 hours.
-              </p>
-            )}
-            {status === 'error' && (
-              <p className="flex items-center gap-2 text-rose-400 text-sm tracking-wide">
-                <AlertCircle size={14} /> Something went wrong. Please email us directly.
-              </p>
-            )}
-          </form>
+          {/* Right: chatbot */}
+          <Reveal delay={0.2}>
+            <Chatbot />
+          </Reveal>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 900px) {
+          .contact-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+          .contact-row { grid-template-columns: 120px 1fr auto !important; }
+        }
+      `}</style>
     </section>
   );
 }
