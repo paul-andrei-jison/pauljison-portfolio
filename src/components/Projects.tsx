@@ -319,6 +319,7 @@ const projects = [
       { label: 'Tailwind', cls: '' },
       { label: 'Serverless', cls: 'green' },
     ],
+    liveUrl: 'https://court-booking-system.pauljison.com',
     visual: <CourtBookingMockup />,
   },
 ];
@@ -341,7 +342,7 @@ export default function Projects() {
         </div>
 
         {/* Project list */}
-        {projects.map((p, i) => {
+        {projects.map((p: typeof projects[number], i) => {
           const isEven = i % 2 === 1;
 
           const textCol = (
@@ -362,7 +363,7 @@ export default function Projects() {
                 </div>
                 <div className="project-links">
                   <MagWrap>
-                    <a href="#" className="glass-btn dark" style={{ padding: '14px 22px', fontSize: 14 }}>
+                    <a href={p.liveUrl ?? '#'} target={p.liveUrl ? '_blank' : undefined} rel={p.liveUrl ? 'noopener noreferrer' : undefined} className="glass-btn dark" style={{ padding: '14px 22px', fontSize: 14 }}>
                       Live demo
                       <span className="ico">
                         <svg width="10" height="10" viewBox="0 0 11 11" fill="none"><path d="M2 9L9 2M9 2H4M9 2V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
