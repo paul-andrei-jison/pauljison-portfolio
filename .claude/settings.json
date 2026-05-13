@@ -1,0 +1,10 @@
+{
+  "enabledPlugins": {
+    "superpowers@superpowers-marketplace": true
+  },
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\('aws-amplify:', p.dependencies['aws-amplify'] || 'NOT FOUND'\\)\")"
+    ]
+  }
+}
