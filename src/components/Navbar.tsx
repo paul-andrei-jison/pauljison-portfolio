@@ -60,7 +60,7 @@ export default function Navbar() {
         onPointerLeave={e => { e.currentTarget.style.transform = ''; }}
       >
         <span className="pulse-green-anim" style={{ width: 6, height: 6, borderRadius: '50%', background: '#30D158', flexShrink: 0 }} />
-        Available
+        Remote&nbsp;•&nbsp;Now open to new opportunities
       </a>
     </nav>
   );

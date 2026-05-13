@@ -90,7 +90,7 @@ export default function Hero() {
         <Reveal>
           <div className="hero-chip">
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#30D158', display: 'inline-block', boxShadow: '0 0 6px #30D158' }} />
-            Now open to new opportunities · Philippines / Remote
+            Remote&nbsp;•&nbsp;Now open to new opportunities
           </div>
         </Reveal>
 
@@ -152,33 +152,6 @@ export default function Hero() {
           </div>
         </Reveal>
 
-        {/* Stats */}
-        <Reveal delay={0.25}>
-          <div style={{ marginTop: 20, display: 'flex', gap: 36, flexWrap: 'wrap', justifyContent: 'center' }}>
-            {[
-              { v: '7+', k: 'Years building' },
-              { v: '40+', k: 'Projects shipped' },
-              { v: '12', k: 'Happy clients' },
-            ].map(({ v, k }) => (
-              <div key={k} style={{ textAlign: 'center' }}>
-                <div style={{
-                  fontFamily: "'Playfair Display', serif",
-                  fontStyle: 'italic', fontWeight: 600,
-                  fontSize: 36,
-                  background: 'var(--grad-1)',
-                  WebkitBackgroundClip: 'text', backgroundClip: 'text',
-                  color: 'transparent',
-                  lineHeight: 1,
-                }}>
-                  {v}
-                </div>
-                <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 4, letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
-                  {k}
-                </div>
-              </div>
-            ))}
-          </div>
-        </Reveal>
 
       </div>
     </section>

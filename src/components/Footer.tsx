@@ -22,7 +22,7 @@ export default function Footer({ onOpenCard }: FooterProps) {
 
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--muted)', fontWeight: 500 }}>
           <span className="pulse-green-anim" style={{ width: 6, height: 6, borderRadius: '50%', background: '#30D158', display: 'inline-block' }} />
-          System operational · Manila, PH
+          System operational · Remote
         </span>
       </div>
     </footer>

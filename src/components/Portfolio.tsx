@@ -25,24 +25,6 @@ const projects: Project[] = [
     demoUrl: 'https://court-booking-system.pauljison.com',
     githubUrl: 'https://github.com/JisonTechSolutions/court-booking-system',
   },
-  {
-    title: 'Arduino E-Commerce',
-    subtitle: 'Hardware & Robotics Hub',
-    description:
-      "A specialized e-commerce storefront for local Arduino components, robotics kits, and electronics — built for Davao's maker community with full inventory and order management.",
-    tags: ['React', 'Express', 'MongoDB', 'PayMongo'],
-    status: 'In Progress',
-    demoUrl: 'https://arduino-e-commerce.pauljison.com',
-  },
-  {
-    title: 'Gym Membership Portal',
-    subtitle: 'Custom Business SaaS',
-    description:
-      'A white-label gym management system featuring member onboarding, recurring billing, attendance tracking, and a mobile-first member portal.',
-    tags: ['React', 'Node.js', 'Supabase', 'Stripe'],
-    status: 'Live',
-    demoUrl: 'https://gym-membership-portal.pauljison.com',
-  },
 ];
 
 const statusStyles: Record<Status, string> = {
@@ -89,24 +71,25 @@ export default function Portfolio() {
         {/* Header */}
         <div className="mb-16 text-center">
           <span className="text-blue-400 text-xs font-medium tracking-widest uppercase">
-            Live Demos
+            Featured Project
           </span>
           <h2 className="mt-3 text-4xl md:text-5xl font-bold tracking-tighter text-white">
-            Our Flagship Projects
+            Live &amp; In Production
           </h2>
           <p className="mt-4 text-gray-400 tracking-wide max-w-xl mx-auto">
-            Real systems built for real Davao businesses. Click to explore the live demos.
+            A real system built on a real serverless stack. Click to explore the live demo.
           </p>
         </div>
 
-        {/* Grid */}
+        {/* Single card — centered */}
         <motion.div
           ref={ref}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="flex justify-center"
           variants={containerVariants}
           initial="hidden"
           animate={isInView ? 'visible' : 'hidden'}
         >
+          <div className="w-full max-w-lg">
           {projects.map(project => {
             const slug = project.title.toLowerCase().replace(/\s+/g, '-');
             return (
@@ -182,6 +165,7 @@ export default function Portfolio() {
               </motion.div>
             );
           })}
+          </div>
         </motion.div>
       </div>
     </section>

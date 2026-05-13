@@ -612,3 +612,43 @@ input, textarea { font-family: inherit; outline: none; }
   .dock-socials a { width: 32px; height: 32px; }
   .dock-cta { padding: 8px 14px; font-size: 12.5px; }
 }
+
+/* ===== PROGRESSIVE ENHANCEMENT ===== */
+
+/* Disable all hover effects on touch/coarse-pointer devices.
+   Prevents sticky hover states that never dismiss on phones. */
+@media (hover: none) {
+  /* Navbar pill — no hover scale */
+  nav a[href="#contact"]:hover { transform: none !important; }
+  /* Hero glass-btn glows */
+  .glass-btn:hover { box-shadow: var(--shadow-glass) !important; transform: none !important; }
+  /* Dock CTA */
+  .dock-cta:hover { transform: none !important; background: var(--grad-1) !important; }
+  /* Dock social icons */
+  .dock-socials a:hover { transform: none !important; background: none !important; }
+  /* Topnav links */
+  .topnav-links a:hover { color: var(--ink-soft) !important; background: none !important; }
+  /* Bento / card hovers — managed inline via onPointerEnter in the new design */
+}
+
+/* Disable all non-essential animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .blob-1, .blob-2, .blob-3, .blob-4 { animation: none !important; }
+  .pulse-green-anim { animation: none !important; }
+}
+
+/* Mobile tap targets — ensure all interactive elements hit ≥ 44px */
+@media (max-width: 768px) {
+  .glass-btn { min-height: 48px; padding: 14px 22px !important; font-size: 15px !important; }
+  .dock-cta { min-height: 44px !important; }
+  .dock-socials a { width: 44px !important; height: 44px !important; }
+  nav a[href="#contact"] { min-height: 44px; padding: 12px 16px !important; font-size: 12px !important; }
+  /* Hero chip — ensure readable on narrow screens */
+  .hero-chip { font-size: 11px !important; padding: 6px 12px !important; max-width: 90vw; text-align: center; }
+}

@@ -235,7 +235,7 @@ function CourtBookingMockup() {
                 <h6 style={{ fontSize: 18, fontWeight: 700, color: '#E8EEFF', letterSpacing: '-0.02em' }}>
                   Book a <em style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', background: 'linear-gradient(120deg,#30D158,#0A84FF)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>Court</em>
                 </h6>
-                <div style={{ fontSize: 11, color: 'rgba(139,156,200,0.7)', marginTop: 2 }}>Saturday, June 14 · Quezon City</div>
+                <div style={{ fontSize: 11, color: 'rgba(139,156,200,0.7)', marginTop: 2 }}>Saturday, June 14 · Remote</div>
               </div>
               <span style={{ padding: '6px 12px', borderRadius: 999, background: 'rgba(48,209,88,0.12)', color: '#1E9C6F', fontWeight: 600, fontSize: 11, border: '1px solid rgba(48,209,88,0.25)' }}>
                 3 courts open
