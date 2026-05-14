@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../amplify/data/resource';
 
@@ -25,18 +26,9 @@ export default function ProjectsGallery() {
     );
   });
 
-  function seedProject() {
-    client.models.Project.create({
-      title: 'Test SaaS Project',
-      description: 'A test project seeded to verify Amplify deployment.',
-      techStack: 'React, TypeScript, AWS Amplify',
-      liveUrl: '',
-    }).catch(err => console.error('Seed failed:', err));
-  }
-
   return (
     <section id="work" className="project-section">
-      <div className="container">
+      <div className="container px-4">
 
         {/* Section header */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 720, margin: '0 auto', textAlign: 'center', alignItems: 'center', padding: '120px 0 60px' }}>
@@ -53,7 +45,7 @@ export default function ProjectsGallery() {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search by title or tech stack…"
-            className="border border-white/10 bg-white/5 rounded-xl px-4 py-3 w-full max-w-md text-sm text-white placeholder-white/30 outline-none focus:border-white/20"
+            className="border border-white/10 bg-white/5 rounded-xl px-4 py-3 w-full sm:max-w-md text-sm text-white placeholder-white/30 outline-none focus:border-white/20"
           />
         </div>
 
@@ -63,11 +55,12 @@ export default function ProjectsGallery() {
             {projects.length === 0 ? 'No projects yet.' : 'No projects match your search.'}
           </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
             {filtered.map(project => (
-              <div
+              <motion.div
                 key={project.id}
-                className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-6 flex flex-col gap-3"
+                layout
+                className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-4 sm:p-6 flex flex-col gap-3 shadow-sm hover:shadow-lg transition-shadow duration-300"
               >
                 <h3 style={{ fontSize: 18, fontWeight: 600, color: '#E8EEFF' }}>{project.title}</h3>
                 <p style={{ fontSize: 14, color: 'rgba(139,156,200,0.7)', lineHeight: 1.6, flex: 1 }}>{project.description}</p>
@@ -98,22 +91,10 @@ export default function ProjectsGallery() {
                     <span className="btn-glow" />
                   </a>
                 )}
-              </div>
+              </motion.div>
             ))}
           </div>
         )}
-
-        {/* Hidden seed button — remove after deployment verified */}
-        <div className="text-center mt-24">
-          <button
-            onClick={seedProject}
-            style={{ fontSize: 12, color: 'rgba(255,255,255,0.2)', cursor: 'pointer', background: 'none', border: 'none', transition: 'color 0.2s' }}
-            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.6)')}
-            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.2)')}
-          >
-            Seed Test Project
-          </button>
-        </div>
 
       </div>
     </section>
