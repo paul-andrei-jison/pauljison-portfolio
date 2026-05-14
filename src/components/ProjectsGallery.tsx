@@ -25,6 +25,15 @@ export default function ProjectsGallery() {
     );
   });
 
+  function seedProject() {
+    client.models.Project.create({
+      title: 'Test SaaS Project',
+      description: 'A test project seeded to verify Amplify deployment.',
+      techStack: 'React, TypeScript, AWS Amplify',
+      liveUrl: '',
+    });
+  }
+
   return (
     <section id="work" className="project-section">
       <div className="container">
@@ -93,6 +102,18 @@ export default function ProjectsGallery() {
             ))}
           </div>
         )}
+
+        {/* Hidden seed button — remove after deployment verified */}
+        <div className="text-center mt-24">
+          <button
+            onClick={seedProject}
+            style={{ fontSize: 12, color: 'rgba(255,255,255,0.2)', cursor: 'pointer', background: 'none', border: 'none', transition: 'color 0.2s' }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.6)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.2)')}
+          >
+            Seed Test Project
+          </button>
+        </div>
 
       </div>
     </section>
