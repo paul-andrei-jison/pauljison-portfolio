@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../amplify/data/resource';
 
@@ -7,9 +7,23 @@ const client = generateClient<Schema>({ authMode: 'apiKey' });
 
 type Project = Schema['Project']['type'];
 
+function ChevronIcon({ open }: { open: boolean }) {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      className={`transition-transform duration-300 ${open ? 'rotate-180' : 'rotate-0'}`}
+    >
+      <path d="M4 6.5L9 11.5L14 6.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export default function ProjectsGallery() {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     const sub = client.models.Project.observeQuery().subscribe({
@@ -18,13 +32,9 @@ export default function ProjectsGallery() {
     return () => sub.unsubscribe();
   }, []);
 
-  const filtered = projects.filter(p => {
-    const q = searchQuery.toLowerCase();
-    return (
-      p.title.toLowerCase().includes(q) ||
-      (p.techStack ?? '').toLowerCase().includes(q)
-    );
-  });
+  function toggle(id: string) {
+    setExpandedId(prev => (prev === id ? null : id));
+  }
 
   return (
     <section id="work" className="project-section">
@@ -38,61 +48,97 @@ export default function ProjectsGallery() {
           </h2>
         </div>
 
-        {/* Search bar */}
-        <div className="flex justify-center mb-10">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search by title or tech stack…"
-            className="border border-white/10 bg-white/5 rounded-xl px-4 py-3 w-full sm:max-w-md text-sm text-white placeholder-white/30 outline-none focus:border-white/20"
-          />
-        </div>
-
-        {/* Project grid */}
-        {filtered.length === 0 ? (
+        {/* Accordion list */}
+        {projects.length === 0 ? (
           <p className="text-center py-20" style={{ color: 'rgba(255,255,255,0.3)' }}>
-            {projects.length === 0 ? 'No projects yet.' : 'No projects match your search.'}
+            No projects yet.
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
-            {filtered.map(project => (
-              <motion.div
-                key={project.id}
-                layout
-                className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-4 sm:p-6 flex flex-col gap-3 shadow-sm hover:shadow-lg transition-shadow duration-300"
-              >
-                <h3 style={{ fontSize: 18, fontWeight: 600, color: '#E8EEFF' }}>{project.title}</h3>
-                <p style={{ fontSize: 14, color: 'rgba(139,156,200,0.7)', lineHeight: 1.6, flex: 1 }}>{project.description}</p>
-                {project.techStack && (
-                  <div className="project-tags">
-                    {project.techStack.split(',').map(t => t.trim()).filter(Boolean).map(tag => (
-                      <span key={tag} className="glass-pill sm">
-                        <span className="glass-icon">
-                          <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="2.5" /></svg>
-                        </span>
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                {project.liveUrl && (
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="glass-btn dark"
-                    style={{ padding: '12px 20px', fontSize: 13, marginTop: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          <div className="max-w-3xl mx-auto divide-y divide-white/10">
+            {projects.map(project => {
+              const isOpen = expandedId === project.id;
+              return (
+                <div key={project.id}>
+                  {/* Header row */}
+                  <button
+                    onClick={() => toggle(project.id)}
+                    className="w-full flex items-center justify-between px-2 py-5 text-left group"
                   >
-                    View Live
-                    <span className="ico">
-                      <svg width="10" height="10" viewBox="0 0 11 11" fill="none"><path d="M2 9L9 2M9 2H4M9 2V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    <span className="text-lg font-semibold text-neutral-900 group-hover:text-white transition-colors duration-200">
+                      {project.title}
                     </span>
-                    <span className="btn-glow" />
-                  </a>
-                )}
-              </motion.div>
-            ))}
+                    <span className="text-white/40 group-hover:text-white/80 transition-colors duration-200 ml-4 shrink-0">
+                      <ChevronIcon open={isOpen} />
+                    </span>
+                  </button>
+
+                  {/* Expandable content */}
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        key="content"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        className="overflow-hidden"
+                      >
+                        <div className="flex flex-col md:flex-row gap-6 px-2 pb-8 pt-2">
+                          {/* Image */}
+                          {project.imageUrl && (
+                            <div className="md:w-64 shrink-0">
+                              <img
+                                src={project.imageUrl}
+                                alt={project.title}
+                                className="w-full rounded-xl object-cover aspect-video"
+                              />
+                            </div>
+                          )}
+
+                          {/* Text content */}
+                          <div className="flex flex-col gap-4 flex-1">
+                            <p className="text-sm text-neutral-600 leading-relaxed">
+                              {project.description}
+                            </p>
+
+                            {project.techStack && (
+                              <div className="project-tags">
+                                {project.techStack.split(',').map(t => t.trim()).filter(Boolean).map(tag => (
+                                  <span key={tag} className="glass-pill sm">
+                                    <span className="glass-icon">
+                                      <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="2.5" /></svg>
+                                    </span>
+                                    {tag}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+
+                            {project.liveUrl && (
+                              <div className="mt-auto">
+                                <a
+                                  href={project.liveUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="glass-btn dark"
+                                  style={{ padding: '12px 20px', fontSize: 13, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                                >
+                                  View Live
+                                  <span className="ico">
+                                    <svg width="10" height="10" viewBox="0 0 11 11" fill="none"><path d="M2 9L9 2M9 2H4M9 2V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                  </span>
+                                  <span className="btn-glow" />
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
           </div>
         )}
 
