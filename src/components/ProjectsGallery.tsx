@@ -31,7 +31,7 @@ export default function ProjectsGallery() {
       description: 'A test project seeded to verify Amplify deployment.',
       techStack: 'React, TypeScript, AWS Amplify',
       liveUrl: '',
-    });
+    }).catch(err => console.error('Seed failed:', err));
   }
 
   return (
