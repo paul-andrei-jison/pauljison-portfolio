@@ -3,7 +3,7 @@ import Cursor from './components/Cursor';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
-import Projects from './components/Projects';
+import ProjectsGallery from './components/ProjectsGallery';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Dock from './components/Dock';
@@ -29,7 +29,7 @@ export default function App() {
         <main>
           <Hero />
           <About />
-          <Projects />
+          <ProjectsGallery />
           <Contact />
         </main>
         <Footer onOpenCard={() => setShowCard(true)} />
