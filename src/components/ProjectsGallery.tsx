@@ -1,11 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { generateClient } from 'aws-amplify/data';
-import type { Schema } from '../../amplify/data/resource';
-
-const client = generateClient<Schema>({ authMode: 'apiKey' });
-
-type Project = Schema['Project']['type'];
+import { PROJECTS } from '../data/projects';
 
 function ChevronIcon({ open }: { open: boolean }) {
   return (
@@ -22,15 +17,7 @@ function ChevronIcon({ open }: { open: boolean }) {
 }
 
 export default function ProjectsGallery() {
-  const [projects, setProjects] = useState<Project[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const sub = client.models.Project.observeQuery().subscribe({
-      next: ({ items }) => setProjects([...items]),
-    });
-    return () => sub.unsubscribe();
-  }, []);
 
   function toggle(id: string) {
     setExpandedId(prev => (prev === id ? null : id));
@@ -49,13 +36,8 @@ export default function ProjectsGallery() {
         </div>
 
         {/* Accordion list */}
-        {projects.length === 0 ? (
-          <p className="text-center py-20" style={{ color: 'rgba(255,255,255,0.3)' }}>
-            No projects yet.
-          </p>
-        ) : (
-          <div className="max-w-3xl mx-auto divide-y divide-white/10">
-            {projects.map(project => {
+        <div className="max-w-3xl mx-auto divide-y divide-white/10">
+          {PROJECTS.map(project => {
               const isOpen = expandedId === project.id;
               return (
                 <div key={project.id}>
@@ -103,7 +85,7 @@ export default function ProjectsGallery() {
 
                             {project.techStack && (
                               <div className="project-tags">
-                                {project.techStack.split(',').map(t => t.trim()).filter(Boolean).map(tag => (
+                                {project.techStack.map(tag => (
                                   <span key={tag} className="glass-pill sm">
                                     <span className="glass-icon">
                                       <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="2.5" /></svg>
@@ -139,8 +121,7 @@ export default function ProjectsGallery() {
                 </div>
               );
             })}
-          </div>
-        )}
+        </div>
 
       </div>
     </section>

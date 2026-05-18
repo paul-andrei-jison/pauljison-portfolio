@@ -6,7 +6,11 @@
       "Bash(git rebase *)",
       "Bash(git fetch *)",
       "Bash(git reset *)",
-      "WebFetch(domain:claude.ai)"
+      "WebFetch(domain:claude.ai)",
+      "Bash(python -c \"import sys,json; p=json.load\\(sys.stdin\\); deps={**p.get\\('dependencies',{}\\), **p.get\\('devDependencies',{}\\)}; print\\('\\\\n'.join\\(f'{k}: {v}' for k in ['tailwindcss','@tailwindcss/vite','aws-amplify','@aws-amplify/backend'] if k in deps\\)\\)\")",
+      "Bash(npx eslint *)",
+      "Bash(git revert *)",
+      "Bash(not exist *)"
     ]
   }
 }
